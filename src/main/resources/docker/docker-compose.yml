@@ -6,24 +6,24 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-  
+
   slave1:
     container_name: redis-slave-1
     image: redis:latest
     ports:
-      - "6380:6380"
-    command: redis-server --port 6380 --slaveof master 6379
+      - "6380:6379"
+    command: redis-server --slaveof master 6379
     links:
       - master:master
 
   slave2:
-      container_name: redis-slave-2
-      image: redis:latest
-      ports:
-        - "6381:6381"
-      command: redis-server --port 6381 --slaveof master 6379
-      links:
-        - master:master
+    container_name: redis-slave-2
+    image: redis:latest
+    ports:
+      - "6381:6379"
+    command: redis-server --slaveof master 6379
+    links:
+      - master:master
 
   sentinel1:
     container_name: redis-sentinel-1
@@ -40,7 +40,7 @@ services:
     container_name: redis-sentinel-2
     image: redis:latest
     ports:
-      - "26380:26380"
+      - "26380:26379"
     volumes:
       - ./sentinel/sentinel2:/data/redis
     command: redis-server /data/redis/sentinel.conf --sentinel
@@ -51,7 +51,7 @@ services:
     container_name: redis-sentinel-3
     image: redis:latest
     ports:
-      - "26381:26381"
+      - "26381:26379"
     volumes:
       - ./sentinel/sentinel3:/data/redis
     command: redis-server /data/redis/sentinel.conf --sentinel
