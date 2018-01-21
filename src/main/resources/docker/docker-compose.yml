@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  master:
+    container_name: redis-master
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  
+  slave1:
+    container_name: redis-slave-1
+    image: redis:latest
+    ports:
+      - "6380:6380"
+    command: redis-server --port 6380 --slaveof master 6379
+    links:
+      - master:master
+
+  slave2:
+      container_name: redis-slave-2
+      image: redis:latest
+      ports:
+        - "6381:6381"
+      command: redis-server --port 6381 --slaveof master 6379
+      links:
+        - master:master
+
+  sentinel1:
+    container_name: redis-sentinel-1
+    image: redis:latest
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./sentinel/sentinel1:/data/redis
+    command: redis-server /data/redis/sentinel.conf --sentinel
+    links:
+      - master:master
+
+  sentinel2:
+    container_name: redis-sentinel-2
+    image: redis:latest
+    ports:
+      - "26380:26380"
+    volumes:
+      - ./sentinel/sentinel2:/data/redis
+    command: redis-server /data/redis/sentinel.conf --sentinel
+    links:
+      - master:master
+
+  sentinel3:
+    container_name: redis-sentinel-3
+    image: redis:latest
+    ports:
+      - "26381:26381"
+    volumes:
+      - ./sentinel/sentinel3:/data/redis
+    command: redis-server /data/redis/sentinel.conf --sentinel
+    links:
+      - master:master
